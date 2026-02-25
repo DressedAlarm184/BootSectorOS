@@ -40,55 +40,50 @@ cmd:
 	mov si, 0x8000
 	mov di, halt
 	call streq
-	jc cmd_halt
+	je cmd_halt
 	mov di, clear
 	call streq
-	jc cmd_clear
+	je cmd_clear
 	mov di, run
 	call streq
-	jc cmd_run
+	je cmd_run
 	mov di, view
 	call streq
-	jc cmd_view
+	je cmd_view
 	mov di, help
 	call streq
-	jc cmd_help
+	je cmd_help
 	mov di, exec
 	call streq
-	jc cmd_exec
+	je cmd_exec
 	mov si, notfound
 	call puts
 	ret
 
 
-read_disk:
-	xor ch, ch
-	mov dx, 0x0080
-	mov ax, 0x0201
-	int 0x13
-
 write_disk:
+	mov ax, 0x0301
+	jmp short do_disk	
+read_disk:
+	mov ax, 0x0201
+do_disk:
 	xor ch, ch
 	mov dx, 0x0080
-	mov ax, 0x0301
-	int 0x13	
+	int 0x13
+	ret
 
 
 streq:
 	push si
 .loop:
-    cmpsb
-    jne .not_equal
-    cmp byte [si-1], 0
-    jnz .loop
-.equal:
-	stc
-    jmp .done
-.not_equal:
-    clc
+	lodsb
+	scasb
+	jne .done
+	test al, al
+	jnz .loop
 .done:
 	pop si
-    ret
+	ret
 
 
 cls:
@@ -136,7 +131,6 @@ gets:
 	mov si, bksp
 	call puts
 	dec bx
-	mov byte [bx], 0
 	jmp .start
 
 
@@ -248,10 +242,9 @@ cmd_help:
 	mov si, halt
 .loop:
 	call puts
-	push si
-	mov si, spacer
-	call puts
-	pop si
+	mov ax, 0x0E20
+	int 0x10
+	int 0x10
 	loop .loop
 .done:
 	jmp shell
@@ -289,7 +282,6 @@ run:      db "run", 0
 view:     db "view", 0
 help:     db "help", 0
 exec:     db "exec", 0
-spacer:   db "  ", 0
 
 times 510-($-$$)-20 db 0
 dw puts

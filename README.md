@@ -40,7 +40,7 @@ They are:
 2. `gets`: No arguments. Reads a 64-byte string from the user into `0x8000`.
 3. `cls`: Clear screen. Does not take any arguments.
 4. `read_disk`: Read the sector in `cl` (Can address 1 to 63 sectors) into the buffer at `bx`.
-5. `streq`: Set the carry flag if the strings at `si` and `di` are equal.
+5. `streq`: Set the zero flag if the strings at `si` and `di` are equal.
 6. `write_disk`: Write to the sector in `cl` the contents of the buffer at `bx`.
 7. `shell`: Do not call this. Specifically `jmp` to it. Meant to be used instead of `ret` when needed.
 8. `getchar`: Wait for a single key and return scancode in `ah` and ASCII in `al`.
@@ -54,6 +54,7 @@ They are:
 * `0x1000`: Welcome message location
 * `0x1400`: User program location (ensure programs contain `[org 0x1400]`)
 * `0x8000`: Buffer that `gets` uses
+* `0x7000`: Top of stack and starting value of `sp`
 
 ## User Program Example
 ```asm
@@ -72,5 +73,5 @@ hello db "Hello, World!", 0
 ```
 
 Extra details:
-* User programs should ideally keep their memory writes between `0x1400` and `0x4000`. This ensures the OS and program, which share the same stack, have at least 3 KiB.
+* User programs should ideally keep their memory writes between `0x1400` and `0x4000`. This ensures the OS and program, which share the same stack, have at least ~12 KiB.
 * User programs may not exceed 512 bytes as the OS only loads one sector. Try to keep strings minimal or load extra data once loaded.
