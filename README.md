@@ -1,6 +1,8 @@
 # BootSectorOS
 This is a fully functional x86 real mode operating system that fits into a 512-byte boot sector.
 
+<img width="720" height="460" alt="image" src="https://github.com/user-attachments/assets/7f178b2b-fcb4-4d77-a84d-3014b1efc058" />
+
 ## Features
 * Basic shell
 * Basic program loader
