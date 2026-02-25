@@ -70,3 +70,7 @@ ret
 
 hello db "Hello, World!", 0
 ```
+
+Extra details:
+* User programs should ideally keep their memory writes between `0x1400` and `0x4000`. This ensures the OS and program, which share the same stack, have at least 3 KiB.
+* User programs may not exceed 512 bytes as the OS only loads one sector. Try to keep strings minimal or load extra data once loaded.
